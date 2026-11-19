@@ -1,7 +1,7 @@
 # PROGRESS
 - [x] Phase 1 Foundation
 - [x] Phase 2 Ingestion
-- [ ] Phase 3 Text Q&A
+- [x] Phase 3 Text Q&A (3b embeddings skipped; BM25 only)
 - [ ] Phase 4 Voice
 - [ ] Phase 5 Interface
 - [ ] Phase 6 Hardening
@@ -17,3 +17,6 @@
 - Blobs are uploaded as access:'private' under u/<userId>/ and read server-side with get(); client must use that prefix (GET /api/documents/upload-token returns it). Images (png/jpg/webp) are also accepted and read by Gemini vision.
 - Ingestion runs inside POST /api/documents (maxDuration 60); status persisted at parsing -> summarizing -> ready/failed. Outline is built deterministically from headings, not by the LLM. Docs > 1.5M chars are rejected with a clear message.
 - LLM layer (lib/llm) built in Phase 2 because summarizer/vision need it.
+- Chat protocol: POST /api/chat streams NDJSON events: meta{conversationId,language,speechLocale} | delta{text} | reset | final{messageId,answer,...} | error{message}. Pre-stream failures return JSON with HTTP status (429 quota, 404, 409 not ready).
+- Query rewrite (LLM) only runs in retrieval mode and only if history exists or language != en; failures fall back to the raw question. Language tie-breaker LLM call only for ambiguous input and counts against the LLM quota.
+- GET /api/conversations?document_id= returns latest conversation + messages (used by UI on open). DELETE /api/conversations/[id] clears it.
