@@ -1,6 +1,6 @@
 # PROGRESS
 - [x] Phase 1 Foundation
-- [ ] Phase 2 Ingestion
+- [x] Phase 2 Ingestion
 - [ ] Phase 3 Text Q&A
 - [ ] Phase 4 Voice
 - [ ] Phase 5 Interface
@@ -14,3 +14,6 @@
 - SheetJS installed from the official CDN tarball (npm xlsx is stale/vulnerable). Next 16, TS 6, vitest 5, zod 4.
 - Embeddings/pgvector (Phase 3b, optional) skipped; BM25 only.
 - Shell heredocs of very long scripts fail in this tool; write files with the Write tool.
+- Blobs are uploaded as access:'private' under u/<userId>/ and read server-side with get(); client must use that prefix (GET /api/documents/upload-token returns it). Images (png/jpg/webp) are also accepted and read by Gemini vision.
+- Ingestion runs inside POST /api/documents (maxDuration 60); status persisted at parsing -> summarizing -> ready/failed. Outline is built deterministically from headings, not by the LLM. Docs > 1.5M chars are rejected with a clear message.
+- LLM layer (lib/llm) built in Phase 2 because summarizer/vision need it.
