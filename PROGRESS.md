@@ -3,7 +3,7 @@
 - [x] Phase 2 Ingestion
 - [x] Phase 3 Text Q&A (3b embeddings skipped; BM25 only)
 - [x] Phase 4 Voice
-- [ ] Phase 5 Interface
+- [x] Phase 5 Interface
 - [ ] Phase 6 Hardening
 - [ ] Phase 7 Deployment guide (README)
 - [ ] SETUP_KEYS.md + final summary
@@ -22,3 +22,4 @@
 - GET /api/conversations?document_id= returns latest conversation + messages (used by UI on open). DELETE /api/conversations/[id] clears it.
 - Voice: server in lib/voice/{stt,tts-server,wav}.ts + /api/voice/{transcribe,tts}; browser libs lib/voice/{recorder,tts,client}.ts are UI-ready (wired in Phase 5). Gemini TTS audio cache is an in-memory LRU per instance (best effort). Added env GEMINI_TTS_VOICE (default Kore, a voice name not a model).
 - Transcribe response: {text, detected_language (our detector), whisper_language, engine}; failures return fallback:"text".
+- UI: AppShell (sidebar docs + upload, mobile slide-over), UploadZone+Stepper, DocumentView (polls while processing), ChatPanel (stream, mic, audio, settings in localStorage, export TXT, clear), SummaryCard, SourcePanel (GET /api/documents/[id]/source), Markdown renderer (no raw HTML). Dark mode and Web Speech live captions skipped (optional). UI was compile/lint-checked only; not exercised in a browser (needs DB and keys).

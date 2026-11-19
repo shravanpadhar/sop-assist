@@ -1,0 +1,21 @@
+const base = { width: 20, height: 20, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
+type P = { className?: string };
+const I = (d: React.ReactNode) => function Icon({ className }: P) { return <svg {...base} className={className}>{d}</svg>; };
+
+export const MicIcon = I(<><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>);
+export const SendIcon = I(<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />);
+export const PlayIcon = I(<path d="M6 4l14 8-14 8z" />);
+export const PauseIcon = I(<path d="M8 4v16M16 4v16" />);
+export const StopIcon = I(<rect x="6" y="6" width="12" height="12" />);
+export const ReplayIcon = I(<><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></>);
+export const CopyIcon = I(<><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V5a2 2 0 0 1 2-2h8" /></>);
+export const ThumbUpIcon = I(<path d="M7 11v9H3v-9zM7 11l4-8a2 2 0 0 1 2 2v4h6a2 2 0 0 1 2 2l-1 7a2 2 0 0 1-2 2H7" />);
+export const ThumbDownIcon = I(<path d="M17 13V4h4v9zM17 13l-4 8a2 2 0 0 1-2-2v-4H5a2 2 0 0 1-2-2l1-7a2 2 0 0 1 2-2h11" />);
+export const FileIcon = I(<><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /></>);
+export const MenuIcon = I(<path d="M3 6h18M3 12h18M3 18h18" />);
+export const CloseIcon = I(<path d="M6 6l12 12M18 6 6 18" />);
+export const TrashIcon = I(<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />);
+export const UploadIcon = I(<path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v4h16v-4" />);
+export const SettingsIcon = I(<><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2" /></>);
+export const BookIcon = I(<path d="M4 4h10a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4zM4 16a4 4 0 0 1 4-4h10" />);
+export const DownloadIcon = I(<path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16" />);
