@@ -1,10 +1,11 @@
 import { getEnv, envProblems } from "@/lib/env";
-import { json } from "@/lib/api";
+import { json, route } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 /** Reports which providers are configured. Never returns key values. */
-export async function GET() {
+// No IP counter here so the health check keeps working even if the database is down.
+export const GET = route({ name: "health", auth: false, ipLimitPerMin: 0 }, async () => {
   const e = getEnv();
   const problems = envProblems();
   return json({
@@ -20,4 +21,4 @@ export async function GET() {
     database: !!e.DATABASE_URL,
     blob: e.BLOB_READ_WRITE_TOKEN ? "vercel-blob" : e.isProd ? "missing" : "local-dev-fallback",
   });
-}
+});

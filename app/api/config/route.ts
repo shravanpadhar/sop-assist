@@ -1,9 +1,9 @@
 import { getEnv } from "@/lib/env";
-import { json } from "@/lib/api";
+import { json, route } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export const GET = route({ name: "config", auth: false, ipLimitPerMin: 120 }, async () => {
   const e = getEnv();
   return json({
     appName: e.APP_NAME,
@@ -14,4 +14,4 @@ export async function GET() {
     ttsEngine: e.TTS_ENGINE,
     hinglishSpeech: e.hinglishSpeech,
   });
-}
+});
