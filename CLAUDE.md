@@ -1,6 +1,6 @@
 # SOP Assist: project notes for Claude Code
 
-Spec: SOP_SPEC.md.md (v2.0). State: PLAN.md and PROGRESS.md. Current phase: 3 done; next is Phase 4 (Voice).
+Spec: SOP_SPEC.md.md (v2.0). State: PLAN.md and PROGRESS.md. Current phase: 4 done; next is Phase 5 (Interface).
 Resume: when the user types "continue", read PROGRESS.md, then do the next unticked phase.
 
 ## Decisions

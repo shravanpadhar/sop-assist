@@ -11,6 +11,7 @@ const schema = z.object({
   GEMINI_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().optional(),
   GEMINI_TTS_MODEL: z.string().optional(),
+  GEMINI_TTS_VOICE: z.string().default("Kore"),
   GROQ_API_KEY: z.string().optional(),
   GROQ_LLM_MODEL: z.string().optional(),
   GROQ_STT_MODEL: z.string().default("whisper-large-v3-turbo"),

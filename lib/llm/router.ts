@@ -37,11 +37,11 @@ const defaultSleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
  * Run `fn` against each provider in order. On a retryable failure (429/5xx/network) retry the same provider once
  * after a short backoff, then move to the next provider. Non-retryable failures move on immediately.
  */
-export async function withFallback<T>(
-  providers: LLMProvider[],
-  fn: (p: LLMProvider, info: AttemptInfo) => Promise<T>,
+export async function withFallback<T, P extends { name: string } = LLMProvider>(
+  providers: P[],
+  fn: (p: P, info: AttemptInfo) => Promise<T>,
   opts: FallbackOptions = {},
-): Promise<{ value: T; provider: LLMProvider }> {
+): Promise<{ value: T; provider: P }> {
   const retries = opts.retries ?? 1;
   const sleep = opts.sleep ?? defaultSleep;
   const failures: { provider: string; message: string; status?: number }[] = [];

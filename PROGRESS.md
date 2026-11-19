@@ -2,7 +2,7 @@
 - [x] Phase 1 Foundation
 - [x] Phase 2 Ingestion
 - [x] Phase 3 Text Q&A (3b embeddings skipped; BM25 only)
-- [ ] Phase 4 Voice
+- [x] Phase 4 Voice
 - [ ] Phase 5 Interface
 - [ ] Phase 6 Hardening
 - [ ] Phase 7 Deployment guide (README)
@@ -20,3 +20,5 @@
 - Chat protocol: POST /api/chat streams NDJSON events: meta{conversationId,language,speechLocale} | delta{text} | reset | final{messageId,answer,...} | error{message}. Pre-stream failures return JSON with HTTP status (429 quota, 404, 409 not ready).
 - Query rewrite (LLM) only runs in retrieval mode and only if history exists or language != en; failures fall back to the raw question. Language tie-breaker LLM call only for ambiguous input and counts against the LLM quota.
 - GET /api/conversations?document_id= returns latest conversation + messages (used by UI on open). DELETE /api/conversations/[id] clears it.
+- Voice: server in lib/voice/{stt,tts-server,wav}.ts + /api/voice/{transcribe,tts}; browser libs lib/voice/{recorder,tts,client}.ts are UI-ready (wired in Phase 5). Gemini TTS audio cache is an in-memory LRU per instance (best effort). Added env GEMINI_TTS_VOICE (default Kore, a voice name not a model).
+- Transcribe response: {text, detected_language (our detector), whisper_language, engine}; failures return fallback:"text".
