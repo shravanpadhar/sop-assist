@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+.env
+.env.*
+!.env.example
+.local-uploads
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+.venv
+.idea
+__pycache__
+coverage
+eval/REPORT.md
