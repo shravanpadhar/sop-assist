@@ -6,6 +6,7 @@ import { getEnv } from "@/lib/env";
 import { createProviders } from "@/lib/llm/router";
 import { deleteUpload, readUpload } from "@/lib/storage";
 import { logger, errMsg } from "@/lib/logger";
+import { AllProvidersFailedError } from "@/lib/llm/base";
 import { kindOf, mimeForKind, sniffMatches, validateUpload } from "./files";
 import { parseBuffer } from "./parsers";
 import { buildOutline, detectDocLanguage, estimateTokens, normalizeText } from "./normalizer";
@@ -105,7 +106,9 @@ export async function ingestDocument(docId: string, userId: string): Promise<Ing
     return { documentId: docId, duplicate: false };
   } catch (e) {
     const friendly =
-      e instanceof IngestError || e instanceof NoVisionProviderError
+      e instanceof AllProvidersFailedError
+        ? "The AI service rejected the request (your file is fine). Check GEMINI_API_KEY/GEMINI_MODEL and GROQ_API_KEY/GROQ_LLM_MODEL in .env.local, then try again. Details are in the server log."
+        : e instanceof IngestError || e instanceof NoVisionProviderError
         ? e.message
         : "We could not process this document. Please try again, or upload a different version of the file.";
     logger.error("ingest_failed", { docId, message: errMsg(e) });

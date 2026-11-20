@@ -16,6 +16,16 @@ export function originAllowed(req: Pick<Request, "method" | "headers">): boolean
   }
 }
 
+/** True when the error chain shows the database could not be reached (DNS, network, wrong URL). */
+export function isDbConnectionError(e: unknown): boolean {
+  for (let cur: unknown = e, i = 0; cur && i < 6; i++) {
+    const m = cur instanceof Error ? cur.message : String(cur);
+    if (/fetch failed|Error connecting to database|ENOTFOUND|ECONNREFUSED|EAI_AGAIN|ETIMEDOUT/i.test(m)) return true;
+    cur = (cur as { cause?: unknown }).cause;
+  }
+  return false;
+}
+
 export function json(data: unknown, status = 200, headers?: Record<string, string>) {
   return NextResponse.json(data, { status, headers });
 }
@@ -61,6 +71,7 @@ export function route<P = Record<string, string>>(opts: Opts, handler: Handler<P
     } catch (e) {
       if (e instanceof QuotaError) return done(fail(e.message, 429, { retryAfter: e.retryAfterSec }, { "Retry-After": String(e.retryAfterSec) }));
       logger.error("route_error", { route: opts.name, message: errMsg(e) });
+      if (isDbConnectionError(e)) return done(fail("Cannot reach the database. Check your internet or DNS connection and the DATABASE_URL in .env.local, then try again.", 503));
       return done(fail("Something went wrong. Please try again.", 500));
     }
   };
