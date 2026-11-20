@@ -64,7 +64,6 @@ export function envProblems(src: Record<string, string | undefined> = process.en
     p.push("No LLM is configured: set GEMINI_API_KEY + GEMINI_MODEL and/or GROQ_API_KEY + GROQ_LLM_MODEL.");
   if (env.GEMINI_API_KEY && !env.GEMINI_MODEL) p.push("GEMINI_API_KEY is set but GEMINI_MODEL is empty.");
   if (env.GROQ_API_KEY && !env.GROQ_LLM_MODEL) p.push("GROQ_API_KEY is set but GROQ_LLM_MODEL is empty.");
-  if (env.isProd && !env.BLOB_READ_WRITE_TOKEN) p.push("BLOB_READ_WRITE_TOKEN is required in production (uploads).");
   if (env.TTS_ENGINE === "gemini" && !env.GEMINI_TTS_MODEL) p.push("TTS_ENGINE=gemini needs GEMINI_TTS_MODEL.");
   return p;
 }
