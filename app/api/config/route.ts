@@ -1,5 +1,6 @@
 import { getEnv } from "@/lib/env";
 import { json, route } from "@/lib/api";
+import { uploadMode } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +10,7 @@ export const GET = route({ name: "config", auth: false, ipLimitPerMin: 120 }, as
     appName: e.APP_NAME,
     companyName: e.COMPANY_NAME,
     privacyNotice: e.PRIVACY_NOTICE,
-    uploadMode: e.BLOB_READ_WRITE_TOKEN ? "blob" : e.isProd ? "disabled" : "local",
+    uploadMode: uploadMode(),
     maxUploadMb: e.MAX_UPLOAD_MB,
     ttsEngine: e.TTS_ENGINE,
     hinglishSpeech: e.hinglishSpeech,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { upload } from "@vercel/blob/client";
+import { upload, uploadPresigned } from "@vercel/blob/client";
 import { validateUpload } from "@/lib/ingestion/files";
 
 export type Stage = "idle" | "uploading" | "reading" | "understanding" | "ready" | "failed";
@@ -36,16 +36,18 @@ export function useUploader(onDone: (documentId: string) => void) {
       try {
         const cfgRes = await fetch("/api/documents/upload-token");
         if (!cfgRes.ok) throw new Error("Please sign in again.");
-        const cfg = (await cfgRes.json()) as { mode: "blob" | "local" | "disabled"; prefix: string; maxBytes: number };
+        const cfg = (await cfgRes.json()) as { mode: "blob" | "blob-oidc" | "local" | "disabled"; prefix: string; maxBytes: number };
         const bad = validateUpload(file.name, file.size, file.type, Math.floor(cfg.maxBytes / 1024 / 1024));
         if (bad) throw new Error(bad);
         if (cfg.mode === "disabled") throw new Error("Uploads are not configured on this server.");
 
         setStage("uploading");
         let url: string;
-        if (cfg.mode === "blob") {
+        if (cfg.mode === "blob" || cfg.mode === "blob-oidc") {
           const safe = file.name.replace(/[^\p{L}\p{N}._ -]+/gu, "_");
-          const res = await upload(`${cfg.prefix}${safe}`, file, { access: "private", handleUploadUrl: "/api/documents/upload-token", multipart: file.size > 4_000_000 });
+          const path = `${cfg.prefix}${Date.now().toString(36)}-${safe}`; // unique so re-uploads never collide
+          const opts = { access: "private" as const, handleUploadUrl: "/api/documents/upload-token", multipart: file.size > 4_000_000 };
+          const res = cfg.mode === "blob" ? await upload(path, file, opts) : await uploadPresigned(path, file, opts);
           url = res.url;
         } else {
           const res = await fetch(`/api/documents/dev-upload?name=${encodeURIComponent(file.name)}`, { method: "PUT", headers: { "x-file-type": file.type }, body: file });

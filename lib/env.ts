@@ -20,6 +20,7 @@ const schema = z.object({
   HINGLISH_SPEECH_MODE: z.string().default("off"),
   DATABASE_URL: z.string().optional(),
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
+  BLOB_STORE_ID: z.string().optional(),
   JWT_SECRET: z.string().default("change-me"),
   MAX_UPLOAD_MB: optInt(10),
   FULL_CONTEXT_MAX_TOKENS: optInt(50000),

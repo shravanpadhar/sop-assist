@@ -8,9 +8,15 @@ import { sanitizeFilename } from "@/lib/ingestion/files";
 const LOCAL_DIR = path.join(process.cwd(), ".local-uploads");
 export const LOCAL_PREFIX = "local:";
 
-export function uploadMode(): "blob" | "local" | "disabled" {
+/**
+ * blob      = classic read-write token (client tokens)
+ * blob-oidc = Vercel-managed credentials (BLOB_STORE_ID, no token): presigned upload URLs
+ * local     = development-only folder fallback
+ */
+export function uploadMode(): "blob" | "blob-oidc" | "local" | "disabled" {
   const e = getEnv();
   if (e.BLOB_READ_WRITE_TOKEN) return "blob";
+  if (e.BLOB_STORE_ID) return "blob-oidc";
   return e.isProd ? "disabled" : "local";
 }
 

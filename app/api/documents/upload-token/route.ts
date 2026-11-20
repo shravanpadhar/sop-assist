@@ -1,4 +1,5 @@
-import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import { handleUpload, handleUploadPresigned, type HandleUploadBody, type HandleUploadPresignedBody } from "@vercel/blob/client";
+import { issueSignedToken } from "@vercel/blob";
 import { getSessionUser } from "@/lib/auth/session";
 import { getEnv } from "@/lib/env";
 import { fail, json, route } from "@/lib/api";
@@ -14,10 +15,35 @@ export const GET = route({ name: "upload-config" }, async (_req, { user }) => {
 
 /** Issues a short-lived client upload token. Requires login; the completion webhook is verified by the SDK. */
 export const POST = route({ name: "upload-token", auth: false, ipLimitPerMin: 60 }, async (req) => {
-  if (uploadMode() !== "blob") return fail("Blob storage is not configured.", 400);
-  const body = (await req.json().catch(() => null)) as HandleUploadBody | null;
-  if (!body) return fail("Invalid request.", 400);
+  const mode = uploadMode();
+  if (mode !== "blob" && mode !== "blob-oidc") return fail("Blob storage is not configured.", 400);
+  const rawBody = await req.json().catch(() => null);
+  if (!rawBody) return fail("Invalid request.", 400);
   const e = getEnv();
+
+  if (mode === "blob-oidc") {
+    // Vercel-managed credentials: issue a presigned PUT scoped to one pathname, size-limited and short-lived.
+    const body = rawBody as HandleUploadPresignedBody;
+    const user = body.type === "blob.generate-presigned-url" ? await getSessionUser() : null;
+    if (body.type === "blob.generate-presigned-url") {
+      if (!user) return fail("Please sign in.", 401);
+      await consume(pgStore, [{ scope: `u:${user.id}`, kind: "upload", period: "h", limit: 30, friendly: "Too many uploads. Please try again later." }]);
+    }
+    const result = await handleUploadPresigned({
+      body,
+      request: req,
+      getSignedToken: async (pathname) => {
+        if (!user || !pathname.startsWith(userPrefix(user.id)) || pathname.includes("..")) throw new Error("Invalid upload path.");
+        if (!ACCEPT_EXTENSIONS.includes(extOf(pathname))) throw new Error("This file type is not supported.");
+        const token = await issueSignedToken({ pathname, operations: ["put"], maximumSizeInBytes: e.MAX_UPLOAD_MB * 1024 * 1024, validUntil: Date.now() + 15 * 60 * 1000 });
+        return { token };
+      },
+      onUploadCompleted: async () => {},
+    });
+    return json(result);
+  }
+
+  const body = rawBody as HandleUploadBody;
 
   if (body.type === "blob.generate-client-token") {
     const user = await getSessionUser();

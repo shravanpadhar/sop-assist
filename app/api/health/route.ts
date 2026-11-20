@@ -1,5 +1,6 @@
 import { getEnv, envProblems } from "@/lib/env";
 import { json, route } from "@/lib/api";
+import { uploadMode } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,6 @@ export const GET = route({ name: "health", auth: false, ipLimitPerMin: 0 }, asyn
     sttEngine: e.STT_ENGINE,
     ttsEngine: e.TTS_ENGINE,
     database: !!e.DATABASE_URL,
-    blob: e.BLOB_READ_WRITE_TOKEN ? "vercel-blob" : e.isProd ? "missing" : "local-dev-fallback",
+    blob: uploadMode() === "blob" ? "vercel-blob" : uploadMode() === "blob-oidc" ? "vercel-blob-oidc" : e.isProd ? "missing" : "local-dev-fallback",
   });
 });

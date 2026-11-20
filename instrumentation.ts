@@ -2,7 +2,7 @@ export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
   if (process.env.NEXT_PHASE === "phase-production-build") return;
   const { envProblems } = await import("./lib/env");
-  if (process.env.NODE_ENV === "production" && !process.env.BLOB_READ_WRITE_TOKEN) {
+  if (process.env.NODE_ENV === "production" && !process.env.BLOB_READ_WRITE_TOKEN && !process.env.BLOB_STORE_ID) {
     console.warn("BLOB_READ_WRITE_TOKEN is not set: uploads are disabled until it is added.");
   }
   const problems = envProblems();
