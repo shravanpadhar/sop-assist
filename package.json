@@ -14,7 +14,8 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "smoke": "tsx scripts/smoke.ts",
     "eval": "tsx eval/run.ts",
-    "samples": "tsx eval/generate-samples.ts"
+    "samples": "tsx eval/generate-samples.ts",
+    "models": "tsx scripts/models.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.1",
