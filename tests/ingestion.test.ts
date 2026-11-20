@@ -218,5 +218,7 @@ describe("provider request shapes", () => {
     expect(b.messages[0]).toEqual({ role: "system", content: "S" });
     expect(b.response_format.type).toBe("json_object");
     expect(b.stream).toBe(true);
+    expect(b.reasoning_effort).toBeUndefined();
+    expect((groqBody("openai/gpt-oss-20b", { messages: [] }, false) as any).reasoning_effort).toBe("low");
   });
 });

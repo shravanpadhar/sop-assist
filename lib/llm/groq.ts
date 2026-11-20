@@ -14,6 +14,8 @@ export function groqBody(model: string, req: LLMRequest, stream: boolean) {
     ...(req.temperature !== undefined ? { temperature: req.temperature } : {}),
     ...(req.maxTokens ? { max_tokens: req.maxTokens } : {}),
     ...(req.json ? { response_format: { type: "json_object" } } : {}),
+    // gpt-oss models spend completion tokens on hidden reasoning; keep it short so answers are not cut off.
+    ...(/gpt-oss/i.test(model) ? { reasoning_effort: "low" } : {}),
   };
 }
 
